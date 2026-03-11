@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Aaron Overhead Doors — AI Assistant Demo</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f0f2f5;
+    min-height: 100vh;
+  }
+
+  /* ── FAKE WEBSITE BEHIND THE CHAT ── */
+  .fake-site {
+    background: #fff;
+    min-height: 100vh;
+  }
+
+  .site-header {
+    background: #1a1a2e;
+    color: #fff;
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .site-header .logo {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .site-header .logo span { color: #f5a623; }
+  .site-header nav a {
+    color: #ccc;
+    text-decoration: none;
+    margin-left: 24px;
+    font-size: 14px;
+  }
+
+  .hero {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+    color: #fff;
+    padding: 72px 32px;
+    text-align: center;
+  }
+  .hero h1 { font-size: 42px; font-weight: 800; margin-bottom: 12px; }
+  .hero h1 span { color: #f5a623; }
+  .hero p { font-size: 18px; color: #aac; margin-bottom: 28px; }
+  .hero-badges { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .hero-badge {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 24px;
+    padding: 8px 18px;
+    font-size: 13px;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .services {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 48px 32px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .service-card {
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .service-card .icon { font-size: 32px; margin-bottom: 10px; }
+  .service-card h3 { font-size: 15px; font-weight: 600; color: #1a1a2e; margin-bottom: 6px; }
+  .service-card p { font-size: 13px; color: #777; }
+
+  .demo-banner {
+    background: linear-gradient(90deg, #f5a623, #f7c06e);
+    color: #1a1a2e;
+    text-align: center;
+    padding: 14px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+
+  /* ── CHAT WIDGET ── */
+  #chat-btn {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    width: 62px;
+    height: 62px;
+    background: linear-gradient(135deg, #f5a623, #e8920e);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(245,166,35,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  #chat-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 28px rgba(245,166,35,0.65);
+  }
+  #chat-btn svg { width: 28px; height: 28px; fill: #fff; }
+  #chat-btn .notif {
+    position: absolute;
+    top: 0; right: 0;
+    width: 18px; height: 18px;
+    background: #e53935;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    font-size: 10px;
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700;
+  }
+
+  #chat-window {
+    position: fixed;
+    bottom: 104px;
+    right: 28px;
+    width: 370px;
+    height: 560px;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 12px 48px rgba(0,0,0,0.18);
+    display: flex;
+    flex-direction: column;
+    z-index: 1001;
+    overflow: hidden;
+    transform: scale(0.85) translateY(20px);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s;
+  }
+  #chat-window.open {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .chat-header {
+    background: linear-gradient(135deg, #1a1a2e, #0f3460);
+    color: #fff;
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+  .chat-avatar {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, #f5a623, #e8920e);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .chat-header-info { flex: 1; }
+  .chat-header-info .name { font-weight: 700; font-size: 15px; }
+  .chat-header-info .status {
+    font-size: 12px; color: #9fc; display: flex; align-items: center; gap: 5px;
+  }
+  .status-dot {
+    width: 7px; height: 7px;
+    background: #4caf50; border-radius: 50%;
+    display: inline-block;
+  }
+  .chat-close {
+    background: none; border: none; color: #aaa;
+    cursor: pointer; font-size: 22px; line-height: 1;
+    padding: 4px;
+  }
+  .chat-close:hover { color: #fff; }
+
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #f7f8fc;
+  }
+  .chat-messages::-webkit-scrollbar { width: 4px; }
+  .chat-messages::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
+
+  .msg {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    animation: fadeUp 0.25s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .msg.bot { justify-content: flex-start; }
+  .msg.user { justify-content: flex-end; }
+
+  .msg-avatar {
+    width: 28px; height: 28px;
+    background: linear-gradient(135deg, #f5a623, #e8920e);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  .bubble {
+    max-width: 80%;
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+  .msg.bot .bubble {
+    background: #fff;
+    color: #222;
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  .msg.user .bubble {
+    background: linear-gradient(135deg, #1a1a2e, #0f3460);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+  }
+
+  .quick-replies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    padding: 4px 0 2px 36px;
+  }
+  .qr {
+    background: #fff;
+    border: 1.5px solid #f5a623;
+    color: #e8920e;
+    border-radius: 20px;
+    padding: 6px 13px;
+    font-size: 12.5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+  }
+  .qr:hover {
+    background: #f5a623;
+    color: #fff;
+  }
+
+  .typing {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+  }
+  .typing-dots {
+    background: #fff;
+    border-radius: 16px;
+    border-bottom-left-radius: 4px;
+    padding: 12px 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+  .typing-dots span {
+    width: 7px; height: 7px;
+    background: #ccc;
+    border-radius: 50%;
+    animation: bounce 1.2s infinite;
+  }
+  .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce {
+    0%,60%,100% { transform: translateY(0); background: #ccc; }
+    30% { transform: translateY(-5px); background: #f5a623; }
+  }
+
+  .chat-input-area {
+    padding: 12px 14px;
+    background: #fff;
+    border-top: 1px solid #eee;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  #chat-input {
+    flex: 1;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 24px;
+    padding: 10px 16px;
+    font-size: 13.5px;
+    outline: none;
+    transition: border-color 0.2s;
+    font-family: inherit;
+  }
+  #chat-input:focus { border-color: #f5a623; }
+  #send-btn {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, #f5a623, #e8920e);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.15s;
+  }
+  #send-btn:hover { transform: scale(1.1); }
+  #send-btn svg { width: 17px; height: 17px; fill: #fff; }
+
+  .chat-footer {
+    text-align: center;
+    font-size: 10.5px;
+    color: #bbb;
+    padding: 6px 0 10px;
+    background: #fff;
+  }
+  .chat-footer a { color: #f5a623; text-decoration: none; }
+
+  /* lead form inside chat */
+  .lead-form {
+    background: #fff;
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 82%;
+    animation: fadeUp 0.25s ease;
+  }
+  .lead-form input {
+    border: 1.5px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    outline: none;
+    font-family: inherit;
+    transition: border-color 0.2s;
+  }
+  .lead-form input:focus { border-color: #f5a623; }
+  .lead-form button {
+    background: linear-gradient(135deg, #f5a623, #e8920e);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .lead-form button:hover { opacity: 0.92; }
+
+  @media (max-width: 420px) {
+    #chat-window { width: calc(100vw - 20px); right: 10px; bottom: 90px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- DEMO BANNER -->
+<div class="demo-banner">
+  🤖 DEMO — AI Chatbot built for Aaron Overhead Doors by Skystone Digital &nbsp;|&nbsp; This widget can be live on your site in 24 hours
+</div>
+
+<!-- FAKE WEBSITE -->
+<div class="fake-site">
+  <header class="site-header">
+    <div class="logo">Aaron <span>Overhead</span> Doors</div>
+    <nav>
+      <a href="#">Services</a>
+      <a href="#">About</a>
+      <a href="#">Reviews</a>
+      <a href="#">Contact</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Atlanta's <span>#1 Rated</span><br>Garage Door Company</h1>
+    <p>2,000+ Five-Star Reviews · Same-Day Service · 24/7 Emergency Repairs</p>
+    <div class="hero-badges">
+      <div class="hero-badge">⭐ 5.0 Google Rating</div>
+      <div class="hero-badge">🔧 Same-Day Service</div>
+      <div class="hero-badge">📞 24/7 Emergency</div>
+      <div class="hero-badge">✅ Licensed & Insured</div>
+    </div>
+  </section>
+
+  <div class="services">
+    <div class="service-card"><div class="icon">🚪</div><h3>New Door Installation</h3><p>All makes, models & styles for your home or business.</p></div>
+    <div class="service-card"><div class="icon">🔧</div><h3>Repairs & Tune-Ups</h3><p>Fast repairs for springs, cables, openers & panels.</p></div>
+    <div class="service-card"><div class="icon">⚡</div><h3>Emergency Service</h3><p>Stuck or broken door? We're available 24 hours a day.</p></div>
+    <div class="service-card"><div class="icon">🏠</div><h3>Opener Installation</h3><p>Smart & standard openers installed same day.</p></div>
+    <div class="service-card"><div class="icon">🔩</div><h3>Spring Replacement</h3><p>Broken spring? We replace all types quickly & safely.</p></div>
+  </div>
+</div>
+
+<!-- CHAT BUTTON -->
+<button id="chat-btn" onclick="toggleChat()">
+  <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+  <div class="notif">1</div>
+</button>
+
+<!-- CHAT WINDOW -->
+<div id="chat-window">
+  <div class="chat-header">
+    <div class="chat-avatar">🚪</div>
+    <div class="chat-header-info">
+      <div class="name">Aaron — Door Assistant</div>
+      <div class="status"><span class="status-dot"></span> Online now · typically replies instantly</div>
+    </div>
+    <button class="chat-close" onclick="toggleChat()">×</button>
+  </div>
+
+  <div class="chat-messages" id="messages"></div>
+
+  <div class="chat-input-area">
+    <input id="chat-input" type="text" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendMsg()" />
+    <button id="send-btn" onclick="sendMsg()">
+      <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+  </div>
+  <div class="chat-footer">Powered by <a href="#">Skystone Digital AI</a></div>
+</div>
+
+<script>
+  let isOpen = false;
+  let step = 'intro';
+  let leadData = {};
+
+  const responses = {
+    intro: {
+      bot: "Hey there! 👋 I'm Aaron's virtual assistant. I can help you with repairs, new installs, pricing, or get you booked in. What brings you here today?",
+      replies: ["🚨 Emergency repair", "📅 Book a service", "💰 Get a quote", "❓ FAQ"]
+    },
+    emergency: {
+      bot: "Got it — let's get someone out to you fast. Is your door stuck open, stuck closed, or off the tracks?",
+      replies: ["Stuck open", "Stuck closed", "Off the tracks", "Other issue"]
+    },
+    emergency2: {
+      bot: "Understood. We have techs available right now in most Atlanta areas — same-day emergency service is available 24/7. Let me grab your info so we can dispatch someone.",
+      form: true
+    },
+    book: {
+      bot: "We're typically available same-day or next morning. What type of service do you need?",
+      replies: ["Repair / tune-up", "New door install", "Opener install", "Spring replacement"]
+    },
+    book2: {
+      bot: "Perfect! We have slots available as early as tomorrow morning. Let me grab a few details to confirm your appointment.",
+      form: true
+    },
+    quote: {
+      bot: "Happy to get you a free estimate! Prices vary by door type and service needed. Quick question — is this for a residential or commercial property?",
+      replies: ["🏠 Residential", "🏢 Commercial"]
+    },
+    quote2: {
+      bot: "Great. For most residential repairs we're in the $150–$350 range depending on the issue. New door installs start around $800. Want me to have a tech call you with an exact quote?",
+      replies: ["Yes, call me", "I'll book online"]
+    },
+    faq: {
+      bot: "Sure! Here are some things I can help with:",
+      replies: ["Do you offer warranties?", "What areas do you serve?", "How fast can you come?", "Are you licensed?"]
+    },
+    warranty: {
+      bot: "Yes! All parts and labor come with a minimum 1-year warranty. Many of our premium door systems include a lifetime warranty on springs and a 5-year warranty on openers. 💪"
+    },
+    areas: {
+      bot: "We serve all of Metro Atlanta including Buckhead, Marietta, Alpharetta, Sandy Springs, Decatur, Smyrna, Roswell, and surrounding areas — usually within 30 minutes. 📍"
+    },
+    speed: {
+      bot: "For emergencies we aim to arrive within 1–2 hours. Standard appointments are available same-day or next morning in most cases. We work 7 days a week! ⚡"
+    },
+    licensed: {
+      bot: "Absolutely. Aaron Overhead Doors is fully licensed, bonded, and insured in Georgia. All our technicians are background-checked and factory-trained. ✅"
+    },
+    callme: {
+      bot: "Perfect — let me grab your info and we'll have someone call you within 15 minutes!",
+      form: true
+    },
+    submitted: {
+      bot: null // handled dynamically
+    }
+  };
+
+  function toggleChat() {
+    isOpen = !isOpen;
+    document.getElementById('chat-window').classList.toggle('open', isOpen);
+    document.querySelector('#chat-btn .notif').style.display = 'none';
+    if (isOpen && document.getElementById('messages').children.length === 0) {
+      setTimeout(() => addBotMsg(responses.intro), 400);
+    }
+  }
+
+  function addBotMsg(resp, customText) {
+    const msgs = document.getElementById('messages');
+
+    // typing indicator
+    const typing = document.createElement('div');
+    typing.className = 'msg bot typing-msg';
+    typing.innerHTML = `<div class="msg-avatar">🚪</div><div class="typing-dots"><span></span><span></span><span></span></div>`;
+    msgs.appendChild(typing);
+    msgs.scrollTop = msgs.scrollHeight;
+
+    setTimeout(() => {
+      typing.remove();
+
+      if (resp.form) {
+        showLeadForm();
+        return;
+      }
+
+      const text = customText || resp.bot;
+      if (text) {
+        const m = document.createElement('div');
+        m.className = 'msg bot';
+        m.innerHTML = `<div class="msg-avatar">🚪</div><div class="bubble">${text}</div>`;
+        msgs.appendChild(m);
+      }
+
+      if (resp.replies) {
+        const qr = document.createElement('div');
+        qr.className = 'quick-replies';
+        resp.replies.forEach(r => {
+          const btn = document.createElement('button');
+          btn.className = 'qr';
+          btn.textContent = r;
+          btn.onclick = () => handleReply(r);
+          qr.appendChild(btn);
+        });
+        msgs.appendChild(qr);
+      }
+
+      msgs.scrollTop = msgs.scrollHeight;
+    }, 900 + Math.random() * 400);
+  }
+
+  function addUserMsg(text) {
+    // remove old quick replies
+    document.querySelectorAll('.quick-replies').forEach(el => el.remove());
+    const msgs = document.getElementById('messages');
+    const m = document.createElement('div');
+    m.className = 'msg user';
+    m.innerHTML = `<div class="bubble">${text}</div>`;
+    msgs.appendChild(m);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  function showLeadForm() {
+    const msgs = document.getElementById('messages');
+    const form = document.createElement('div');
+    form.className = 'lead-form';
+    form.innerHTML = `
+      <strong style="font-size:13px;color:#1a1a2e;">📋 Your Contact Info</strong>
+      <input id="lf-name" placeholder="Your name" />
+      <input id="lf-phone" placeholder="Phone number" />
+      <input id="lf-addr" placeholder="Service address (optional)" />
+      <button onclick="submitLead()">✅ Submit — Get Help Fast</button>
+    `;
+    msgs.appendChild(form);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  function submitLead() {
+    const name = document.getElementById('lf-name').value.trim() || 'there';
+    const phone = document.getElementById('lf-phone').value.trim();
+    document.querySelectorAll('.lead-form').forEach(el => el.remove());
+    addUserMsg(`Name: ${name}${phone ? ' · ' + phone : ''}`);
+    setTimeout(() => {
+      const msgs = document.getElementById('messages');
+      const m = document.createElement('div');
+      m.className = 'msg bot';
+      m.innerHTML = `<div class="msg-avatar">🚪</div><div class="bubble">Thanks, ${name}! 🎉 You're all set — a team member will reach out shortly. If it's urgent, call us directly at <strong>(678) 369-9937</strong>. We appreciate you choosing Aaron Overhead Doors!</div>`;
+      msgs.appendChild(m);
+      msgs.scrollTop = msgs.scrollHeight;
+    }, 1000);
+  }
+
+  function handleReply(text) {
+    addUserMsg(text);
+    const t = text.toLowerCase();
+
+    if (t.includes('emergency') || t.includes('stuck') || t.includes('tracks') || t.includes('other issue')) {
+      if (t.includes('emergency')) addBotMsg(responses.emergency);
+      else addBotMsg(responses.emergency2);
+    } else if (t.includes('book') || t.includes('repair') || t.includes('new door') || t.includes('opener') || t.includes('spring')) {
+      if (t.includes('book')) addBotMsg(responses.book);
+      else addBotMsg(responses.book2);
+    } else if (t.includes('quote') || t.includes('residential') || t.includes('commercial')) {
+      if (t.includes('quote')) addBotMsg(responses.quote);
+      else addBotMsg(responses.quote2);
+    } else if (t.includes('faq')) {
+      addBotMsg(responses.faq);
+    } else if (t.includes('warrant')) {
+      addBotMsg(responses.warranty);
+    } else if (t.includes('area') || t.includes('serve')) {
+      addBotMsg(responses.areas);
+    } else if (t.includes('fast') || t.includes('come')) {
+      addBotMsg(responses.speed);
+    } else if (t.includes('licensed') || t.includes('insured')) {
+      addBotMsg(responses.licensed);
+    } else if (t.includes('call me') || t.includes('call')) {
+      addBotMsg(responses.callme);
+    } else if (t.includes('book online') || t.includes("i'll book")) {
+      addBotMsg(responses.book2);
+    } else {
+      addBotMsg(null, "I want to make sure I get you the right help! You can also call us directly at <strong>(678) 369-9937</strong> or I can have a team member reach out to you. Would you like that?");
+    }
+  }
+
+  function sendMsg() {
+    const input = document.getElementById('chat-input');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    addUserMsg(text);
+
+    const t = text.toLowerCase();
+    if (t.includes('emergency') || t.includes('broken') || t.includes('stuck') || t.includes('urgent')) {
+      addBotMsg(responses.emergency);
+    } else if (t.includes('book') || t.includes('appoint') || t.includes('schedul')) {
+      addBotMsg(responses.book);
+    } else if (t.includes('price') || t.includes('cost') || t.includes('quote') || t.includes('how much')) {
+      addBotMsg(responses.quote);
+    } else if (t.includes('warrant')) {
+      addBotMsg(responses.warranty);
+    } else if (t.includes('area') || t.includes('location') || t.includes('serve')) {
+      addBotMsg(responses.areas);
+    } else if (t.includes('how fast') || t.includes('how soon') || t.includes('today')) {
+      addBotMsg(responses.speed);
+    } else if (t.includes('licensed') || t.includes('insured') || t.includes('certified')) {
+      addBotMsg(responses.licensed);
+    } else {
+      addBotMsg(null, "Great question! For anything I can't answer directly, I can connect you with a team member right away. Want me to have someone reach out to you?");
+    }
+  }
+
+  // auto-open after 3s to grab attention
+  setTimeout(() => {
+    if (!isOpen) toggleChat();
+  }, 3000);
+</script>
+</body>
+</html>
