@@ -722,33 +722,99 @@
       addBotMsg(null, "I want to make sure I get you the right help! You can also call us directly at <strong>(678) 369-9937</strong> or I can have a team member reach out to you. Would you like that?");
     }
   }
+  function sendMsg(){
+   const input=document.getElementById('chat-input');
+   const text=input.value.trim();
+   if(!text) return;
+   
+   input.value='';
+   addUserMsg(text);
+   
+   const t=text.toLowerCase();
+   
+   if(t.includes("emergency")||t.includes("urgent")||t.includes("stuck")||t.includes("off track")){
+   addBotMsg(responses.emergency);
+   }
+   
+   else if(t.includes("spring")){
+   addBotMsg(responses.springprice);
+   }
+   
+   else if(t.includes("cost")||t.includes("price")||t.includes("how much")){
+   addBotMsg(responses.pricing);
+   }
+   
+   else if(t.includes("repair")){
+   addBotMsg(responses.repaircost);
+   }
+   
+   else if(t.includes("new door")||t.includes("install")){
+   addBotMsg(responses.newdoor);
+   }
+   
+   else if(t.includes("opener")){
+   addBotMsg(responses.opener);
+   }
+   
+   else if(t.includes("book")||t.includes("schedule")||t.includes("appointment")){
+   addBotMsg(responses.book);
+   }
+   
+   else if(t.includes("area")||t.includes("location")||t.includes("serve")){
+   addBotMsg(responses.areas);
+   }
+   
+   else if(t.includes("how fast")||t.includes("how soon")||t.includes("today")){
+   addBotMsg(responses.speed);
+   }
+   
+   else if(t.includes("review")||t.includes("rating")){
+   addBotMsg(responses.reviews);
+   }
+   
+   else if(t.includes("warranty")){
+   addBotMsg(responses.warranty);
+   }
+   
+   else if(t.includes("licensed")||t.includes("insured")){
+   addBotMsg(responses.licensed);
+   }
+   
+   else if(t.includes("phone")||t.includes("call")){
+   addBotMsg(responses.call);
+   }
+   
+   else{
+   addBotMsg(null,"I can help with **garage door repair, pricing, installations, or scheduling service.** Would you like to book a technician or get a quote?");
+   }
+   
+   }
+  // function sendMsg() {
+  //   const input = document.getElementById('chat-input');
+  //   const text = input.value.trim();
+  //   if (!text) return;
+  //   input.value = '';
+  //   addUserMsg(text);
 
-  function sendMsg() {
-    const input = document.getElementById('chat-input');
-    const text = input.value.trim();
-    if (!text) return;
-    input.value = '';
-    addUserMsg(text);
-
-    const t = text.toLowerCase();
-    if (t.includes('emergency') || t.includes('broken') || t.includes('stuck') || t.includes('urgent')) {
-      addBotMsg(responses.emergency);
-    } else if (t.includes('book') || t.includes('appoint') || t.includes('schedul')) {
-      addBotMsg(responses.book);
-    } else if (t.includes('price') || t.includes('cost') || t.includes('quote') || t.includes('how much')) {
-      addBotMsg(responses.quote);
-    } else if (t.includes('warrant')) {
-      addBotMsg(responses.warranty);
-    } else if (t.includes('area') || t.includes('location') || t.includes('serve')) {
-      addBotMsg(responses.areas);
-    } else if (t.includes('how fast') || t.includes('how soon') || t.includes('today')) {
-      addBotMsg(responses.speed);
-    } else if (t.includes('licensed') || t.includes('insured') || t.includes('certified')) {
-      addBotMsg(responses.licensed);
-    } else {
-      addBotMsg(null, "Great question! For anything I can't answer directly, I can connect you with a team member right away. Want me to have someone reach out to you?");
-    }
-  }
+  //   const t = text.toLowerCase();
+  //   if (t.includes('emergency') || t.includes('broken') || t.includes('stuck') || t.includes('urgent')) {
+  //     addBotMsg(responses.emergency);
+  //   } else if (t.includes('book') || t.includes('appoint') || t.includes('schedul')) {
+  //     addBotMsg(responses.book);
+  //   } else if (t.includes('price') || t.includes('cost') || t.includes('quote') || t.includes('how much')) {
+  //     addBotMsg(responses.quote);
+  //   } else if (t.includes('warrant')) {
+  //     addBotMsg(responses.warranty);
+  //   } else if (t.includes('area') || t.includes('location') || t.includes('serve')) {
+  //     addBotMsg(responses.areas);
+  //   } else if (t.includes('how fast') || t.includes('how soon') || t.includes('today')) {
+  //     addBotMsg(responses.speed);
+  //   } else if (t.includes('licensed') || t.includes('insured') || t.includes('certified')) {
+  //     addBotMsg(responses.licensed);
+  //   } else {
+  //     addBotMsg(null, "Great question! For anything I can't answer directly, I can connect you with a team member right away. Want me to have someone reach out to you?");
+  //   }
+  // }
 
   // auto-open after 3s to grab attention
   setTimeout(() => {
