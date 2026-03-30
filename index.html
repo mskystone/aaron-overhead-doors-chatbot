@@ -441,163 +441,60 @@
   let step = 'intro';
   let leadData = {};
 
-  // const responses = {
-  //   intro: {
-  //     bot: "Hey there! 👋 I'm Aaron's virtual assistant. I can help you with repairs, new installs, pricing, or get you booked in. What brings you here today?",
-  //     replies: ["🚨 Emergency repair", "📅 Book a service", "💰 Get a quote", "❓ FAQ"]
-  //   },
-  //   emergency: {
-  //     bot: "Got it — let's get someone out to you fast. Is your door stuck open, stuck closed, or off the tracks?",
-  //     replies: ["Stuck open", "Stuck closed", "Off the tracks", "Other issue"]
-  //   },
-  //   emergency2: {
-  //     bot: "Understood. We have techs available right now in most Atlanta areas — same-day emergency service is available 24/7. Let me grab your info so we can dispatch someone.",
-  //     form: true
-  //   },
-  //   book: {
-  //     bot: "We're typically available same-day or next morning. What type of service do you need?",
-  //     replies: ["Repair / tune-up", "New door install", "Opener install", "Spring replacement"]
-  //   },
-  //   book2: {
-  //     bot: "Perfect! We have slots available as early as tomorrow morning. Let me grab a few details to confirm your appointment.",
-  //     form: true
-  //   },
-  //   quote: {
-  //     bot: "Happy to get you a free estimate! Prices vary by door type and service needed. Quick question — is this for a residential or commercial property?",
-  //     replies: ["🏠 Residential", "🏢 Commercial"]
-  //   },
-  //   quote2: {
-  //     bot: "Great. For most residential repairs we're in the $150–$350 range depending on the issue. New door installs start around $800. Want me to have a tech call you with an exact quote?",
-  //     replies: ["Yes, call me", "I'll book online"]
-  //   },
-  //   faq: {
-  //     bot: "Sure! Here are some things I can help with:",
-  //     replies: ["Do you offer warranties?", "What areas do you serve?", "How fast can you come?", "Are you licensed?"]
-  //   },
-  //   warranty: {
-  //     bot: "Yes! All parts and labor come with a minimum 1-year warranty. Many of our premium door systems include a lifetime warranty on springs and a 5-year warranty on openers. 💪"
-  //   },
-  //   areas: {
-  //     bot: "We serve all of Metro Atlanta including Buckhead, Marietta, Alpharetta, Sandy Springs, Decatur, Smyrna, Roswell, and surrounding areas — usually within 30 minutes. 📍"
-  //   },
-  //   speed: {
-  //     bot: "For emergencies we aim to arrive within 1–2 hours. Standard appointments are available same-day or next morning in most cases. We work 7 days a week! ⚡"
-  //   },
-  //   licensed: {
-  //     bot: "Absolutely. Aaron Overhead Doors is fully licensed, bonded, and insured in Georgia. All our technicians are background-checked and factory-trained. ✅"
-  //   },
-  //   callme: {
-  //     bot: "Perfect — let me grab your info and we'll have someone call you within 15 minutes!",
-  //     form: true
-  //   },
-  //   submitted: {
-  //     bot: null // handled dynamically
-  //   }
-  // };
   const responses = {
-  
-  intro:{
-  bot:"Hey there! 👋 I'm Aaron's garage door assistant. I can help with repairs, pricing, new doors, or scheduling service. What do you need help with?",
-  replies:[
-  "🚨 Emergency repair",
-  "💰 Pricing",
-  "📅 Book service",
-  "🚪 New garage door",
-  "❓ Common questions"
-  ]
-  },
-  
-  emergency:{
-  bot:"If your garage door is stuck, off track, or won't open, we can send a technician right away. ⚡ What seems to be the problem?",
-  replies:[
-  "Door won't open",
-  "Door stuck closed",
-  "Broken spring",
-  "Off the track",
-  "Other issue"
-  ]
-  },
-  
-  emergency2:{
-  bot:"That definitely sounds like something we should fix quickly. We offer **same-day and 24/7 emergency repair in the Atlanta area.** Let me grab your info so we can dispatch a technician.",
-  form:true
-  },
-  
-  pricing:{
-  bot:"Pricing depends on the issue, but here are typical ranges:",
-  replies:[
-  "Spring replacement price",
-  "Repair cost",
-  "New garage door cost",
-  "Free quote"
-  ]
-  },
-  
-  springprice:{
-  bot:"Most **garage door spring replacements range from $180–$350** depending on the door size and spring type. Our technician can confirm the exact price before starting the repair. 🔧"
-  },
-  
-  repaircost:{
-  bot:"Typical garage door repairs range from **$150–$350** depending on the issue. We always diagnose the problem first and give you an exact quote before any work begins."
-  },
-  
-  newdoor:{
-  bot:"We install a wide range of garage doors including modern, traditional, insulated, and carriage-style doors. 🚪 Would you like a **free estimate for a new door installation?**",
-  replies:[
-  "Yes, get a quote",
-  "Show door options",
-  "Book installation"
-  ]
-  },
-  
-  newdoorprice:{
-  bot:"Most new garage door installations start around **$800–$2,500+** depending on size, insulation, and design. We can provide a **free on-site quote.**"
-  },
-  
-  book:{
-  bot:"We offer **same-day and next-day appointments** in most Atlanta areas. What service do you need?",
-  replies:[
-  "Repair / tune-up",
-  "Spring replacement",
-  "Opener repair",
-  "New door install"
-  ]
-  },
-  
-  book2:{
-  bot:"Perfect 👍 Let me grab a few details so we can confirm your appointment.",
-  form:true
-  },
-  
-  opener:{
-  bot:"We repair and install **LiftMaster, Chamberlain, Genie, Craftsman and most major garage door openers.** Is your opener not responding or making noise?"
-  },
-  
-  areas:{
-  bot:"We serve **Metro Atlanta** including Marietta, Alpharetta, Roswell, Sandy Springs, Smyrna, Buckhead, Decatur and nearby areas. 📍"
-  },
-  
-  speed:{
-  bot:"For emergencies we usually arrive **within 1–2 hours**. Standard appointments are often **same-day or next morning.**"
-  },
-  
-  reviews:{
-  bot:"Aaron Overhead Doors is one of the **top-rated garage door companies in Atlanta with thousands of 5-star reviews. ⭐** Customers choose us for fast service, honest pricing, and professional technicians."
-  },
-  
-  warranty:{
-  bot:"Yes 👍 All repairs include a **minimum 1-year warranty** on parts and labor. Many spring systems include **lifetime spring warranties.**"
-  },
-  
-  licensed:{
-  bot:"Yes — we are **fully licensed, bonded, and insured in Georgia.** All technicians are trained and background-checked. ✅"
-  },
-  
-  call:{
-  bot:"If you'd prefer to talk with someone immediately, you can call **(678) 369-9937** and our team will help you right away."
-  }
-  
+    intro: {
+      bot: "Hey there! 👋 I'm Aaron's virtual assistant. I can help you with repairs, new installs, pricing, or get you booked in. What brings you here today?",
+      replies: ["🚨 Emergency repair", "📅 Book a service", "💰 Get a quote", "❓ FAQ"]
+    },
+    emergency: {
+      bot: "Got it — let's get someone out to you fast. Is your door stuck open, stuck closed, or off the tracks?",
+      replies: ["Stuck open", "Stuck closed", "Off the tracks", "Other issue"]
+    },
+    emergency2: {
+      bot: "Understood. We have techs available right now in most Atlanta areas — same-day emergency service is available 24/7. Let me grab your info so we can dispatch someone.",
+      form: true
+    },
+    book: {
+      bot: "We're typically available same-day or next morning. What type of service do you need?",
+      replies: ["Repair / tune-up", "New door install", "Opener install", "Spring replacement"]
+    },
+    book2: {
+      bot: "Perfect! We have slots available as early as tomorrow morning. Let me grab a few details to confirm your appointment.",
+      form: true
+    },
+    quote: {
+      bot: "Happy to get you a free estimate! Prices vary by door type and service needed. Quick question — is this for a residential or commercial property?",
+      replies: ["🏠 Residential", "🏢 Commercial"]
+    },
+    quote2: {
+      bot: "Great. For most residential repairs we're in the $150–$350 range depending on the issue. New door installs start around $800. Want me to have a tech call you with an exact quote?",
+      replies: ["Yes, call me", "I'll book online"]
+    },
+    faq: {
+      bot: "Sure! Here are some things I can help with:",
+      replies: ["Do you offer warranties?", "What areas do you serve?", "How fast can you come?", "Are you licensed?"]
+    },
+    warranty: {
+      bot: "Yes! All parts and labor come with a minimum 1-year warranty. Many of our premium door systems include a lifetime warranty on springs and a 5-year warranty on openers. 💪"
+    },
+    areas: {
+      bot: "We serve all of Metro Atlanta including Buckhead, Marietta, Alpharetta, Sandy Springs, Decatur, Smyrna, Roswell, and surrounding areas — usually within 30 minutes. 📍"
+    },
+    speed: {
+      bot: "For emergencies we aim to arrive within 1–2 hours. Standard appointments are available same-day or next morning in most cases. We work 7 days a week! ⚡"
+    },
+    licensed: {
+      bot: "Absolutely. Aaron Overhead Doors is fully licensed, bonded, and insured in Georgia. All our technicians are background-checked and factory-trained. ✅"
+    },
+    callme: {
+      bot: "Perfect — let me grab your info and we'll have someone call you within 15 minutes!",
+      form: true
+    },
+    submitted: {
+      bot: null // handled dynamically
+    }
   };
+
   function toggleChat() {
     isOpen = !isOpen;
     document.getElementById('chat-window').classList.toggle('open', isOpen);
@@ -722,99 +619,33 @@
       addBotMsg(null, "I want to make sure I get you the right help! You can also call us directly at <strong>(678) 369-9937</strong> or I can have a team member reach out to you. Would you like that?");
     }
   }
-  function sendMsg(){
-   const input=document.getElementById('chat-input');
-   const text=input.value.trim();
-   if(!text) return;
-   
-   input.value='';
-   addUserMsg(text);
-   
-   const t=text.toLowerCase();
-   
-   if(t.includes("emergency")||t.includes("urgent")||t.includes("stuck")||t.includes("off track")){
-   addBotMsg(responses.emergency);
-   }
-   
-   else if(t.includes("spring")){
-   addBotMsg(responses.springprice);
-   }
-   
-   else if(t.includes("cost")||t.includes("price")||t.includes("how much")){
-   addBotMsg(responses.pricing);
-   }
-   
-   else if(t.includes("repair")){
-   addBotMsg(responses.repaircost);
-   }
-   
-   else if(t.includes("new door")||t.includes("install")){
-   addBotMsg(responses.newdoor);
-   }
-   
-   else if(t.includes("opener")){
-   addBotMsg(responses.opener);
-   }
-   
-   else if(t.includes("book")||t.includes("schedule")||t.includes("appointment")){
-   addBotMsg(responses.book);
-   }
-   
-   else if(t.includes("area")||t.includes("location")||t.includes("serve")){
-   addBotMsg(responses.areas);
-   }
-   
-   else if(t.includes("how fast")||t.includes("how soon")||t.includes("today")){
-   addBotMsg(responses.speed);
-   }
-   
-   else if(t.includes("review")||t.includes("rating")){
-   addBotMsg(responses.reviews);
-   }
-   
-   else if(t.includes("warranty")){
-   addBotMsg(responses.warranty);
-   }
-   
-   else if(t.includes("licensed")||t.includes("insured")){
-   addBotMsg(responses.licensed);
-   }
-   
-   else if(t.includes("phone")||t.includes("call")){
-   addBotMsg(responses.call);
-   }
-   
-   else{
-   addBotMsg(null,"I can help with **garage door repair, pricing, installations, or scheduling service.** Would you like to book a technician or get a quote?");
-   }
-   
-   }
-  // function sendMsg() {
-  //   const input = document.getElementById('chat-input');
-  //   const text = input.value.trim();
-  //   if (!text) return;
-  //   input.value = '';
-  //   addUserMsg(text);
 
-  //   const t = text.toLowerCase();
-  //   if (t.includes('emergency') || t.includes('broken') || t.includes('stuck') || t.includes('urgent')) {
-  //     addBotMsg(responses.emergency);
-  //   } else if (t.includes('book') || t.includes('appoint') || t.includes('schedul')) {
-  //     addBotMsg(responses.book);
-  //   } else if (t.includes('price') || t.includes('cost') || t.includes('quote') || t.includes('how much')) {
-  //     addBotMsg(responses.quote);
-  //   } else if (t.includes('warrant')) {
-  //     addBotMsg(responses.warranty);
-  //   } else if (t.includes('area') || t.includes('location') || t.includes('serve')) {
-  //     addBotMsg(responses.areas);
-  //   } else if (t.includes('how fast') || t.includes('how soon') || t.includes('today')) {
-  //     addBotMsg(responses.speed);
-  //   } else if (t.includes('licensed') || t.includes('insured') || t.includes('certified')) {
-  //     addBotMsg(responses.licensed);
-  //   } else {
-  //     addBotMsg(null, "Great question! For anything I can't answer directly, I can connect you with a team member right away. Want me to have someone reach out to you?");
-  //   }
-  // }
+  function sendMsg() {
+    const input = document.getElementById('chat-input');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    addUserMsg(text);
+
+    const t = text.toLowerCase();
+    if (t.includes('emergency') || t.includes('broken') || t.includes('stuck') || t.includes('urgent')) {
+      addBotMsg(responses.emergency);
+    } else if (t.includes('book') || t.includes('appoint') || t.includes('schedul')) {
+      addBotMsg(responses.book);
+    } else if (t.includes('price') || t.includes('cost') || t.includes('quote') || t.includes('how much')) {
+      addBotMsg(responses.quote);
+    } else if (t.includes('warrant')) {
+      addBotMsg(responses.warranty);
+    } else if (t.includes('area') || t.includes('location') || t.includes('serve')) {
+      addBotMsg(responses.areas);
+    } else if (t.includes('how fast') || t.includes('how soon') || t.includes('today')) {
+      addBotMsg(responses.speed);
+    } else if (t.includes('licensed') || t.includes('insured') || t.includes('certified')) {
+      addBotMsg(responses.licensed);
+    } else {
+      addBotMsg(null, "Great question! For anything I can't answer directly, I can connect you with a team member right away. Want me to have someone reach out to you?");
+    }
+  }
 
   // auto-open after 3s to grab attention
   setTimeout(() => {
